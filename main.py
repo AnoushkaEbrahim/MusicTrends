@@ -44,3 +44,9 @@ columns_to_check = ['Danceability', 'Energy', 'Loudness', 'Speechiness',
     #print()
 tracks_df.to_csv('datasets/cleaned_tracks.csv', index=False)
 #print("Cleaned dataset saved as 'cleaned_tracks.csv'")
+
+print(tracks_df.head())
+tracks_df = tracks_df.dropna(subset=['Name'])  # Drop rows where 'name' is missing
+tracks_df = tracks_df.dropna()  # Drop rows where any column has missing values
+missing_values_after = tracks_df.isnull().sum() # Recalculate missing values
+print(missing_values_after)
