@@ -25,15 +25,38 @@ tracks_df['Artists'] = tracks_df['Artists'].str.lower().str.strip().replace("[",
 #print(tracks_df['Artists'].head())
 tracks_df['Name'] = tracks_df['Name'].str.lower().str.strip()
     #Formatting DATEANDTIME
-tracks_df['Release_Date'] = tracks_df['Release_Date'].astype(str).str.strip()
-def standardize_date(x): 
-    if len(x) == 4:
-        return f"01-01-{x}"  # If it's just a year, return it as the first day of January of that year
-    else:
-        return x
-tracks_df['Release_Date'] = tracks_df['Release_Date'].apply(standardize_date)
+def preprocess_release_date(date):
+    # Check if the value is a year (e.g., '1955')
+    if isinstance(date, str) and date.isdigit() and len(date) == 4:
+        return f"{date}-01-01"
+    # Check if the value is in the format 'YYYY-MM'
+    elif isinstance(date, str) and len(date) == 7 and date.count('-') == 1:
+        return f"{date}-01"
+    return date  # Return as is for full dates or other valid formats
+
+# Apply preprocessing to the 'release_date' column
+tracks_df['Release_Date'] = tracks_df['Release_Date'].apply(preprocess_release_date)
+
+# Convert the column to datetime format
 tracks_df['Release_Date'] = pd.to_datetime(tracks_df['Release_Date'], errors='coerce')
-#print(tracks_df['Release_Date'].head())
+
+# Check for remaining invalid dates
+invalid_dates = tracks_df[tracks_df['Release_Date'].isna()]
+
+# Display results
+#print("Conversion complete.")
+#print(f"Remaining invalid dates (if any): {len(invalid_dates)}")
+#if not invalid_dates.empty:
+    #print(invalid_dates)
+
+# Check the data type of the 'release_date' column
+#release_date_dtype = tracks_df['Release_Date'].dtype
+#print(f"The data type of 'release_date' is: {release_date_dtype}")
+
+# Check for missing data
+#missing_data = tracks_df.isnull().sum()
+#print(missing_data)
+
     #checking for OUTLIERS
 #using unique method to see if values are within expected range
 columns_to_check = ['Danceability', 'Energy', 'Loudness', 'Speechiness', 
@@ -42,8 +65,36 @@ columns_to_check = ['Danceability', 'Energy', 'Loudness', 'Speechiness',
     #print(f"Unique values in '{col}':")
     #print(tracks_df[col].unique())
     #print()
-tracks_df.to_csv('datasets/cleaned_tracks.csv', index=False)
+
+#creating new column 'Decade'
+tracks_df['Decade'] = (tracks_df['Release_Date'].dt.year // 10) * 10
+
+#creating new column 'Duration_Min' (milli second to minute)
+tracks_df['Duration_Min'] = tracks_df['Duration_Ms'] / 60000 
+#print(tracks_df.dtypes)
+
+#drop columns 'Release_Date' and 'Duration_Ms' since we have 'Decade' and 'Duration_Min' column
+tracks_df.drop(columns=['Release_Date', 'Duration_Ms'], inplace=True)
+#print(tracks_df.dtypes)
+
+#drop columns which are irrelevant for the analysis 'Artist'
+tracks_df.drop(columns=['Artists'], inplace=True)
+#print(tracks_df.dtypes)
+
+# Check for missing data
+missing_data = tracks_df.isnull().sum()
+print(missing_data)
+
+
+
+
+
+   
+#tracks_df.to_csv(r'C:\GitHub\vsProject\MusicTrends\datasets\cleaned_tracks.csv', index=False)
 #print("Cleaned dataset saved as 'cleaned_tracks.csv'")
+#tracks_df.to_csv('C:\\DocsSahi\\UE\\Final Projects\\DataAnalytics\\tracksfiltered.csv', index=False)
+#print("Saved")
+
 
 print(tracks_df.head())
 tracks_df = tracks_df.dropna(subset=['Name'])  # Drop rows where 'name' is missing
