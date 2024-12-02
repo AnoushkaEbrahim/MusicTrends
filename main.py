@@ -86,12 +86,7 @@ missing_data = tracks_df.isnull().sum()
 print(missing_data)
 
 
+tracks_df.to_csv(r'C:\GitHub\vsProject\MusicTrends\datasets\cleaned_tracks.csv', index=False)
+print("Cleaned dataset saved as 'cleaned_tracks.csv'")
 
-
-
-   
-#tracks_df.to_csv(r'C:\GitHub\vsProject\MusicTrends\datasets\cleaned_tracks.csv', index=False)
-#print("Cleaned dataset saved as 'cleaned_tracks.csv'")
-#tracks_df.to_csv('C:\\DocsSahi\\UE\\Final Projects\\DataAnalytics\\tracksfiltered.csv', index=False)
-#print("Saved")
 
