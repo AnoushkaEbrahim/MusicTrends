@@ -96,8 +96,11 @@ print(missing_data)
 #print("Saved")
 
 
-print(tracks_df.head())
+#print(tracks_df.head())
 tracks_df = tracks_df.dropna(subset=['Name'])  # Drop rows where 'name' is missing
 tracks_df = tracks_df.dropna()  # Drop rows where any column has missing values
 missing_values_after = tracks_df.isnull().sum() # Recalculate missing values
-print(missing_values_after)
+#print(missing_values_after)
+
+tracks_df.to_csv('datasets/cleaned_tracks.csv', index=False)
+print("\nDataset updated and saved successfully!")
